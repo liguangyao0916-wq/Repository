@@ -1,0 +1,16 @@
+{
+  "name": "卦阁 · 星命塔签",
+  "short_name": "卦阁",
+  "description": "星座运势 · 四柱八字 · 塔罗占卜 · 趣味抽签",
+  "lang": "zh-CN",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#100a1e",
+  "theme_color": "#100a1e",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

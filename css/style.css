@@ -1,0 +1,669 @@
+/* ============================================================
+   卦阁 v4 · 设计系统 —— 现代新中式
+   深墨夜空底 + 金色点缀 + 毛玻璃 + 流畅动画
+   ============================================================ */
+
+:root {
+  --bg-0: #100a1e;        /* 深紫夜空 */
+  --bg-1: #1a1030;        /* 次级深紫 */
+  --bg-2: #271741;        /* 抬起表面 */
+  --gold: #d4b06a;        /* 鎏金 */
+  --gold-soft: #f0ddb0;   /* 亮金 */
+  --gold-deep: #a8894e;   /* 深金 */
+  --jade: #8fd0b0;        /* 青玉点缀 */
+  --text: #f0ead9;        /* 暖纸白 */
+  --text-dim: #a79bc2;    /* 淡紫灰次级 */
+  --line: rgba(212, 176, 106, .20);
+  --card-bg: rgba(255, 255, 255, .05);
+  --card-border: rgba(212, 176, 106, .18);
+  --red: #d0706a;
+  --green: #8fd0b0;
+  --night: #2a1a4a;
+  --night-2: #44338a;
+  --font-serif: "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+  --font-sans: "Noto Sans CJK SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --tabbar-h: 64px;
+  --wx-gold: #d4a017;
+  --wx-wood: #7fae57;
+  --wx-water: #6aa7d8;
+  --wx-fire: #c9796b;
+  --wx-earth: #b39b7c;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  color: var(--text);
+  background:
+    radial-gradient(1200px 620px at 50% -10%, rgba(212, 176, 106, .13), transparent 60%),
+    radial-gradient(900px 600px at 92% 18%, rgba(163, 122, 235, .14), transparent 55%),
+    radial-gradient(700px 520px at 6% 82%, rgba(110, 78, 200, .15), transparent 60%),
+    linear-gradient(180deg, #100a1e 0%, #1a1030 45%, #0d0818 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  padding-bottom: calc(var(--tabbar-h) + 14px);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: rgba(212, 175, 110, .35); }
+
+/* ============ 页头 ============ */
+.topbar {
+  position: relative; text-align: center; padding: 26px 16px 20px;
+  overflow: hidden; border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(212, 175, 110, .06), transparent);
+}
+.topbar h1 {
+  font-family: var(--font-serif);
+  font-size: 30px; letter-spacing: 12px; font-weight: 700; color: var(--gold-soft);
+  text-shadow: 0 0 24px rgba(212, 175, 110, .45);
+}
+.topbar .sub { font-size: 12px; letter-spacing: 5px; color: var(--text-dim); margin-top: 8px; }
+
+/* ============ 主内容 ============ */
+.wrap { max-width: 540px; margin: 0 auto; padding: 18px 14px; }
+.module { display: none; }
+.module.active { display: block; animation: riseIn .45s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes riseIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* ============ 毛玻璃卡片 ============ */
+.card {
+  position: relative;
+  background: var(--card-bg);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .04);
+  padding: 20px 18px; margin-bottom: 16px;
+}
+.card-title {
+  display: flex; align-items: center; font-size: 16px; color: var(--gold-soft);
+  letter-spacing: 4px; margin-bottom: 16px; font-weight: 700; font-family: var(--font-serif);
+}
+.card-title::before {
+  content: ""; width: 4px; height: 18px;
+  background: linear-gradient(var(--gold-soft), var(--gold-deep));
+  border-radius: 2px; margin-right: 10px;
+}
+
+/* ============ 表单 ============ */
+.form-row { margin-bottom: 14px; }
+.form-row label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; letter-spacing: 2px; }
+.form-row label b { color: var(--gold); }
+.form-row input[type=number] {
+  width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 11px;
+  background: rgba(255, 255, 255, .04); font-size: 16px; font-family: inherit; color: var(--text);
+  transition: border-color .15s, box-shadow .15s;
+}
+.form-row input[type=number]:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212, 175, 110, .12); }
+.form-row input[type=number]::placeholder { color: rgba(168, 154, 133, .5); }
+.three-col { display: flex; gap: 10px; }
+.three-col > div { flex: 1; }
+.seg-select { display: flex; gap: 10px; }
+.seg-btn {
+  flex: 1; padding: 12px; text-align: center; border: 1px solid var(--line); border-radius: 11px;
+  background: rgba(255, 255, 255, .04); font-family: inherit; font-size: 15px; letter-spacing: 2px;
+  color: var(--text-dim); cursor: pointer; transition: all .15s;
+}
+.seg-btn.active { background: linear-gradient(135deg, var(--gold-deep), var(--gold)); color: #241a08; border-color: var(--gold); font-weight: 700; box-shadow: 0 3px 14px rgba(212, 175, 110, .25); }
+
+.btn-primary {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, var(--gold-deep), var(--gold));
+  color: #241a08; border: none; border-radius: 13px; font-size: 18px;
+  letter-spacing: 8px; font-family: var(--font-serif); cursor: pointer; font-weight: 700;
+  box-shadow: 0 6px 18px rgba(212, 175, 110, .30);
+  transition: transform .12s, box-shadow .12s;
+}
+.btn-primary:active { transform: scale(.97); }
+.btn-ghost {
+  width: 100%; padding: 13px; border: 1px solid var(--line); border-radius: 13px;
+  background: rgba(255, 255, 255, .03); color: var(--text-dim); font-size: 15px;
+  font-family: inherit; letter-spacing: 3px; cursor: pointer; transition: all .15s;
+}
+.btn-ghost:active { transform: scale(.97); }
+
+.form-hint { font-size: 11px; color: var(--text-dim); margin-top: 8px; line-height: 1.7; text-align: center; letter-spacing: 1px; }
+
+/* ============ 四柱 ============ */
+.bazi-grid { display: flex; gap: 7px; }
+.pillar {
+  flex: 1; border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden;
+  text-align: center; background: rgba(255, 255, 255, .03); box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+}
+.pillar .pillar-label { background: linear-gradient(135deg, var(--gold-deep), var(--gold)); color: #241a08; font-size: 12px; letter-spacing: 3px; padding: 5px 0; font-weight: 700; }
+.pillar .gan { font-size: 34px; padding: 12px 0 2px; color: var(--gold-soft); font-weight: 700; line-height: 1.1; font-family: var(--font-serif); }
+.pillar .zhi { font-size: 34px; padding: 2px 0 8px; color: var(--text); font-weight: 700; line-height: 1.1; font-family: var(--font-serif); }
+.pillar .ssg { font-size: 11px; color: var(--bg-0); background: linear-gradient(90deg, var(--gold-deep), var(--gold)); padding: 4px 0; font-weight: 600; }
+.pillar .hide { font-size: 11px; padding: 6px 0 2px; color: var(--text-dim); }
+.pillar .nayin { font-size: 11px; padding: 2px 0 8px; color: var(--gold-deep); }
+.pillar.day-pillar { border: 2px solid var(--gold); box-shadow: 0 0 0 3px rgba(212, 175, 110, .12); }
+.pillar-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.pillar-meta span { font-size: 11px; color: var(--text-dim); background: rgba(255, 255, 255, .05); border: 1px solid var(--line); padding: 3px 9px; border-radius: 20px; }
+
+/* ============ 信息表 ============ */
+.info-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.info-table td { padding: 9px 6px; border-bottom: 1px dashed var(--line); }
+.info-table td:first-child { color: var(--text-dim); width: 92px; letter-spacing: 1px; }
+.info-table tr:last-child td { border-bottom: none; }
+.tag { display: inline-block; background: linear-gradient(135deg, var(--gold-deep), var(--gold)); color: #241a08; font-size: 11px; padding: 2px 10px; border-radius: 20px; margin-left: 4px; letter-spacing: 1px; font-weight: 600; }
+
+/* ============ 五行 ============ */
+.wuxing-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+.wx-label { width: 26px; text-align: center; font-size: 16px; font-weight: 700; font-family: var(--font-serif); }
+.wx-bar-bg { flex: 1; height: 17px; background: rgba(255, 255, 255, .07); border-radius: 9px; overflow: hidden; }
+.wx-bar { height: 100%; border-radius: 9px; transition: width .7s cubic-bezier(.22, 1, .36, 1); }
+.wx-count { width: 30px; text-align: center; font-size: 13px; color: var(--text-dim); }
+.wx-tip { font-size: 13px; color: var(--text-dim); margin-top: 10px; line-height: 1.9; padding-top: 10px; border-top: 1px dashed var(--line); }
+
+/* ============ 大运 ============ */
+.dayun-wrap { display: flex; overflow-x: auto; gap: 6px; padding-bottom: 6px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+.dayun-item {
+  min-width: 60px; text-align: center; border: 1px solid var(--card-border); border-radius: 10px;
+  padding: 9px 4px; background: rgba(255, 255, 255, .04); flex-shrink: 0;
+}
+.dayun-item .age { font-size: 11px; color: var(--text-dim); }
+.dayun-item .gz { font-size: 18px; color: var(--gold-soft); font-weight: 700; margin: 3px 0; font-family: var(--font-serif); }
+.dayun-item .year { font-size: 10px; color: var(--gold-deep); }
+
+/* ============ 大运·小运列表 ============ */
+.dayun-list { display: flex; flex-direction: column; gap: 6px; }
+.dayun-block { border: 1px solid var(--card-border); border-radius: 10px; overflow: hidden; }
+.dayun-head {
+  width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+  background: rgba(255, 255, 255, .04); border: none; cursor: pointer;
+  font-family: inherit; color: var(--text); transition: background .15s;
+}
+.dayun-head:active { background: rgba(255, 255, 255, .08); }
+.dayun-head .dh-age { font-size: 13px; color: var(--gold-soft); font-family: var(--font-serif); font-weight: 700; min-width: 40px; }
+.dayun-head .dh-gz { font-size: 17px; color: var(--text); font-family: var(--font-serif); font-weight: 700; flex: 1; text-align: left; }
+.dayun-head .dh-year { font-size: 11px; color: var(--text-dim); }
+.dayun-head .dh-toggle { font-size: 11px; color: var(--gold-deep); margin-left: auto; transition: transform .2s; }
+.dayun-head.open .dh-toggle { transform: rotate(180deg); }
+.xiaoyun-wrap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; padding: 6px 8px 8px; background: rgba(255, 255, 255, .02); border-top: 1px dashed var(--line); }
+.xiaoyun-wrap.hidden { display: none; }
+.xiaoyun-item { text-align: center; padding: 4px 2px; border-radius: 7px; background: rgba(255, 255, 255, .03); }
+.xiaoyun-item .xy-year { font-size: 9px; color: var(--text-dim); }
+.xiaoyun-item .xy-age { font-size: 9px; color: var(--gold-deep); margin-top: 1px; }
+.xiaoyun-item .xy-gz { font-size: 12px; color: var(--gold-soft); font-family: var(--font-serif); font-weight: 700; margin-top: 1px; }
+
+/* ============ 解读 ============ */
+.reading { font-size: 14px; line-height: 2.05; color: var(--text); }
+.reading p { margin-bottom: 9px; text-indent: 2em; }
+
+/* ============ AI 通用 ============ */
+.ai-btn {
+  width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 16px;
+  letter-spacing: 4px; font-family: var(--font-serif); cursor: pointer;
+  transition: transform .12s, opacity .15s;
+}
+.ai-btn:active { transform: scale(.97); }
+.ai-btn[disabled] { opacity: .6; }
+.ai-btn.book-btn { background: linear-gradient(135deg, var(--gold-deep), var(--gold)); color: #241a08; box-shadow: 0 5px 16px rgba(168, 132, 74, .35); }
+.ai-btn.night-btn { background: linear-gradient(135deg, var(--night-2), var(--night)); color: #e8e4ff; }
+.ai-loading { padding: 18px 0 8px; color: var(--gold); text-align: center; }
+.ai-loading .spinner { width: 34px; height: 34px; margin: 0 auto 10px; border: 3px solid rgba(212, 175, 110, .25); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.ai-note { font-size: 11px; color: var(--text-dim); margin-top: 9px; line-height: 1.7; text-align: center; letter-spacing: 1px; }
+.ai-degraded { color: var(--gold-deep); }
+
+/* ============ 命之书 ============ */
+.book-covers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px; }
+.book-cover {
+  aspect-ratio: 3/4; border-radius: 10px; cursor: pointer; position: relative;
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+  color: var(--gold-light, var(--gold-soft)); font-size: 13px; letter-spacing: 2px;
+  background: linear-gradient(160deg, var(--gold-deep), #5a3d1a);
+  border: 1px solid rgba(236, 217, 171, .35); transition: transform .15s, box-shadow .15s;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, .3);
+}
+.book-cover:nth-child(2) { background: linear-gradient(160deg, #7a1f3d, #4f0d2b); }
+.book-cover:nth-child(3) { background: linear-gradient(160deg, #1f4f3d, #0d2b1f); }
+.book-cover:nth-child(4) { background: linear-gradient(160deg, #1f2f5e, #0d1745); }
+.book-cover:nth-child(5) { background: linear-gradient(160deg, #4a2a5e, #2b0d45); }
+.book-cover:nth-child(6) { background: linear-gradient(160deg, #5e4a1f, #45300d); }
+.book-cover:nth-child(7) { background: linear-gradient(160deg, #1f5e55, #0d4530); }
+.book-cover.active { transform: scale(1.05); box-shadow: 0 0 0 2px var(--gold), 0 5px 14px rgba(0, 0, 0, .4); }
+.book-cover .icon { font-size: 24px; margin-bottom: 6px; }
+.book-cover .name { font-size: 12px; }
+.book-chapter { display: none; }
+.book-chapter.show { display: block; animation: fadeIn .5s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.book-chapter h3 { color: var(--gold-soft); font-size: 16px; letter-spacing: 3px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px dashed var(--line); font-family: var(--font-serif); }
+.book-chapter p { font-size: 14px; line-height: 2.05; color: var(--text); margin-bottom: 8px; }
+.book-chapter p:first-of-type { text-indent: 2em; }
+
+/* ============ 追问对话 ============ */
+.chat-box { max-height: 320px; overflow-y: auto; padding: 6px 2px; margin-bottom: 10px; }
+.chat-msg { margin-bottom: 10px; display: flex; }
+.chat-msg .bubble { max-width: 82%; padding: 10px 12px; border-radius: 12px; font-size: 14px; line-height: 1.8; }
+.chat-msg.user { justify-content: flex-end; }
+.chat-msg.user .bubble { background: linear-gradient(135deg, var(--gold-deep), var(--gold)); color: #241a08; border-bottom-right-radius: 3px; }
+.chat-msg.ai { justify-content: flex-start; }
+.chat-msg.ai .bubble { background: rgba(255, 255, 255, .06); color: var(--text); border: 1px solid var(--line); border-bottom-left-radius: 3px; }
+.chat-msg.ai .bubble p { margin-bottom: 6px; }
+.chat-msg.ai .bubble p:last-child { margin-bottom: 0; }
+.chat-input-row { display: flex; gap: 8px; }
+.chat-input-row input {
+  flex: 1; padding: 12px; border: 1px solid var(--line); border-radius: 11px;
+  background: rgba(255, 255, 255, .04); font-size: 15px; font-family: inherit; color: var(--text);
+}
+.chat-input-row input:focus { outline: none; border-color: var(--gold); }
+.chat-input-row button {
+  padding: 0 18px; border: none; border-radius: 11px; background: linear-gradient(135deg, var(--night-2), var(--night));
+  color: #e8e4ff; font-size: 15px; letter-spacing: 2px; font-family: inherit; cursor: pointer;
+}
+.chat-suggests { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chat-suggests button {
+  font-size: 12px; color: var(--gold-soft); background: rgba(255, 255, 255, .05); border: 1px solid var(--line);
+  border-radius: 20px; padding: 5px 11px; font-family: inherit; cursor: pointer;
+}
+.chat-typing { color: var(--text-dim); font-size: 13px; padding: 8px 2px; }
+.chat-typing .dots::after { content: "…"; animation: dots 1.2s steps(4) infinite; }
+@keyframes dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+
+/* ============ 流年运势 ============ */
+.liunian-years { display: flex; overflow-x: auto; gap: 6px; margin-bottom: 14px; padding-bottom: 4px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+.liunian-years button {
+  min-width: 64px; padding: 9px 8px; border: 1px solid var(--line); border-radius: 9px;
+  background: rgba(255, 255, 255, .04); font-size: 13px; font-family: inherit; color: var(--text-dim); cursor: pointer; flex-shrink: 0;
+  transition: all .15s;
+}
+.liunian-years button.active { background: linear-gradient(135deg, var(--gold-deep), var(--gold)); color: #241a08; border-color: var(--gold); font-weight: 700; }
+.liunian-content { font-size: 14px; line-height: 2.05; color: var(--text); }
+.liunian-content p { margin-bottom: 8px; text-indent: 2em; }
+.liunian-content h4 { color: var(--gold-soft); font-size: 15px; margin: 12px 0 6px; letter-spacing: 2px; border-left: 3px solid var(--gold); padding-left: 8px; font-family: var(--font-serif); }
+
+/* ============ 星座模块 ============ */
+.zodiac-hero { text-align: center; padding: 14px 0 6px; }
+.zodiac-symbol { font-size: 56px; line-height: 1.2; }
+.zodiac-name { font-size: 22px; letter-spacing: 4px; color: var(--gold-soft); font-family: var(--font-serif); margin-top: 4px; }
+.zodiac-en { font-size: 12px; letter-spacing: 3px; color: var(--text-dim); margin-top: 4px; text-transform: uppercase; }
+.score-ring-wrap { display: flex; align-items: center; justify-content: center; gap: 18px; padding: 14px 0 4px; }
+.score-ring { position: relative; width: 96px; height: 96px; }
+.score-ring svg { display: block; }
+.score-ring .score-num { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 700; color: var(--gold-soft); font-family: var(--font-serif); }
+.score-tags { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--text); }
+.score-tags .lbl { color: var(--text-dim); }
+.fortune-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fortune-item { background: rgba(255, 255, 255, .04); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.fortune-item.full { grid-column: 1 / -1; }
+.fortune-item h4 { font-size: 13px; color: var(--gold); letter-spacing: 2px; margin-bottom: 6px; }
+.fortune-item p { font-size: 13.5px; line-height: 1.85; color: var(--text); }
+.lucky-strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; justify-content: center; }
+.lucky-chip { font-size: 12px; color: var(--gold-soft); background: rgba(212, 175, 110, .10); border: 1px solid var(--line); padding: 5px 12px; border-radius: 20px; }
+.period-switch { display: flex; gap: 8px; margin-bottom: 14px; }
+.period-switch button {
+  flex: 1; padding: 10px; border: 1px solid var(--line); border-radius: 11px; background: rgba(255, 255, 255, .03);
+  color: var(--text-dim); font-size: 14px; letter-spacing: 2px; font-family: inherit; cursor: pointer; transition: all .15s;
+}
+.period-switch button.active { background: linear-gradient(135deg, var(--gold-deep), var(--gold)); color: #241a08; border-color: var(--gold); font-weight: 700; }
+
+/* ============ 塔罗模块 ============ */
+.tarot-question { font-size: 13.5px; color: var(--text-dim); line-height: 1.9; margin-bottom: 14px; text-align: center; }
+.spread-choose { display: flex; gap: 10px; margin-bottom: 16px; }
+.spread-choose button {
+  flex: 1; padding: 13px 8px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255, 255, 255, .03);
+  color: var(--text-dim); font-family: inherit; font-size: 14px; letter-spacing: 1px; cursor: pointer; transition: all .15s;
+}
+.spread-choose button.active { background: linear-gradient(135deg, var(--night-2), var(--night)); color: #e8e4ff; border-color: rgba(122, 92, 200, .5); }
+.tarot-question-input { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 11px; background: rgba(255, 255, 255, .04); color: var(--text); font-size: 14px; font-family: inherit; margin-bottom: 14px; }
+.tarot-question-input:focus { outline: none; border-color: var(--gold); }
+.tarot-cards { display: flex; justify-content: center; gap: 14px; padding: 20px 0 10px; }
+.tarot-slot { position: relative; width: 92px; height: 150px; perspective: 800px; cursor: pointer; }
+.tarot-inner {
+  position: relative; width: 100%; height: 100%; transition: transform .8s cubic-bezier(.2, .7, .3, 1);
+  transform-style: preserve-3d; cursor: pointer;
+}
+.tarot-slot.flipped .tarot-inner { transform: rotateY(180deg); }
+.tarot-face {
+  position: absolute; inset: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  border: 1px solid var(--card-border); box-shadow: 0 6px 20px rgba(0, 0, 0, .4);
+}
+.tarot-back {
+  background: linear-gradient(160deg, #2b2450, #171033);
+  background-image: repeating-linear-gradient(45deg, rgba(212, 175, 110, .10) 0 2px, transparent 2px 6px), linear-gradient(160deg, #2b2450, #171033);
+  color: var(--gold); font-size: 26px;
+}
+.tarot-front {
+  transform: rotateY(180deg); background: rgba(20, 16, 33, .95); flex-direction: column; padding: 8px; text-align: center;
+}
+.tarot-front .t-no { position: absolute; top: 6px; left: 8px; font-size: 10px; color: var(--gold-deep); }
+.tarot-front .t-name { font-size: 17px; color: var(--gold-soft); font-family: var(--font-serif); letter-spacing: 2px; }
+.tarot-front .t-orient { font-size: 10px; margin-top: 2px; letter-spacing: 2px; }
+.tarot-front .t-orient.up { color: var(--green); }
+.tarot-front .t-orient.down { color: var(--red); }
+.tarot-front .t-kw { font-size: 11px; color: var(--text-dim); margin-top: 6px; line-height: 1.7; }
+.tarot-slot-label { text-align: center; font-size: 12px; color: var(--text-dim); letter-spacing: 2px; margin-top: 8px; }
+.tarot-reading { font-size: 14px; line-height: 2.0; color: var(--text); margin-top: 8px; }
+.tarot-reading p { margin-bottom: 9px; text-indent: 2em; }
+.tarot-reading .card-head { color: var(--gold-soft); font-weight: 700; text-indent: 0; margin-top: 12px; }
+
+/* ============ 抽签模块 ============ */
+.qian-cat-choose { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.qian-cat-choose button {
+  padding: 14px 8px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255, 255, 255, .03);
+  color: var(--text-dim); font-family: inherit; font-size: 15px; letter-spacing: 2px; cursor: pointer; transition: all .15s;
+}
+.qian-cat-choose button.active { background: linear-gradient(135deg, var(--gold-deep), var(--gold)); color: #241a08; border-color: var(--gold); font-weight: 700; }
+.qian-cylinder { display: flex; justify-content: center; padding: 26px 0 18px; }
+.qian-cylinder .tube {
+  width: 96px; height: 130px; position: relative;
+  background: linear-gradient(180deg, #3a2c18, #241a0c);
+  border: 1px solid rgba(212, 175, 110, .4); border-radius: 16px 16px 10px 10px;
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, .5), 0 8px 24px rgba(0, 0, 0, .45);
+  transform-origin: 50% 88%;
+}
+.qian-cylinder .tube::before { content: "簽"; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); color: var(--gold); font-size: 22px; font-family: var(--font-serif); opacity: .85; }
+.qian-cylinder .sticks { position: absolute; top: -26px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; }
+.qian-cylinder .sticks i { position: absolute; bottom: 0; left: 50%; width: 2px; height: 52px; background: linear-gradient(180deg, var(--gold-soft), var(--gold-deep)); border-radius: 2px; transform-origin: 50% 100%; }
+.qian-cylinder.shaking .tube { animation: qianShake .9s ease-in-out 1; }
+.qian-cylinder.shaking .sticks { animation: qianShake .9s ease-in-out 1; }
+@keyframes qianShake {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-5deg); }
+  40% { transform: rotate(5deg); }
+  60% { transform: rotate(-3deg); }
+  80% { transform: rotate(3deg); }
+}
+.qian-result { text-align: center; padding: 6px 0; }
+.qian-level { display: inline-block; font-size: 26px; letter-spacing: 6px; font-family: var(--font-serif); font-weight: 700; padding: 6px 22px; border-radius: 14px; border: 1px solid; }
+.qian-level.l0 { color: #ecd9ab; border-color: #ecd9ab; background: rgba(236, 217, 171, .08); text-shadow: 0 0 18px rgba(236, 217, 171, .5); }
+.qian-level.l1 { color: #d4af6e; border-color: #d4af6e; background: rgba(212, 175, 110, .08); }
+.qian-level.l2 { color: #a8c8a0; border-color: #a8c8a0; background: rgba(168, 200, 160, .08); }
+.qian-level.l3 { color: #c0504d; border-color: #c0504d; background: rgba(192, 80, 77, .08); }
+.qian-poem { font-family: var(--font-serif); font-size: 17px; line-height: 2.1; color: var(--gold-soft); margin: 16px 0 12px; letter-spacing: 1px; }
+.qian-text { font-size: 14px; line-height: 2.0; color: var(--text); }
+.qian-text p { text-indent: 2em; margin-bottom: 8px; }
+.qian-no { font-size: 12px; color: var(--text-dim); margin-top: 10px; letter-spacing: 2px; }
+
+/* ============ 今日融合面板 ============ */
+.today-date { text-align: center; padding: 6px 0 12px; }
+.today-d1 { font-size: 20px; color: var(--gold-soft); font-family: var(--font-serif); letter-spacing: 2px; }
+.today-d2 { font-size: 13px; color: var(--text-dim); margin-top: 8px; letter-spacing: 1px; }
+.today-d3 { font-size: 12px; color: var(--text-dim); margin-top: 4px; letter-spacing: 1px; }
+.today-yiji { display: flex; flex-direction: column; gap: 8px; padding: 4px 0; }
+.yiji-line { display: flex; gap: 10px; font-size: 14px; align-items: baseline; }
+.yiji-line b { font-size: 13px; letter-spacing: 2px; padding: 2px 10px; border-radius: 8px; font-weight: 700; flex-shrink: 0; }
+.yiji-line b.yi { color: #07120a; background: var(--green); }
+.yiji-line b.ji { color: #f7eaea; background: var(--red); }
+.today-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.today-meta span { font-size: 11px; color: var(--text-dim); background: rgba(255,255,255,.05); border: 1px solid var(--line); padding: 3px 9px; border-radius: 14px; }
+.today-pos { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; font-size: 13px; }
+.today-pos span { color: var(--gold-soft); }
+.today-element { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 13px; color: var(--text-dim); line-height: 1.8; }
+.today-pengzu { margin-top: 10px; font-size: 12px; color: var(--text-dim); line-height: 1.8; }
+.today-jianchu { margin-top: 6px; font-size: 12px; color: var(--gold-deep); }
+
+.today-times { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.today-time { text-align: center; padding: 8px 2px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,.03); }
+.today-time.good { border-color: rgba(125,163,127,.5); }
+.today-time.bad { border-color: rgba(192,80,77,.4); }
+.today-time .tt-gz { font-size: 14px; color: var(--gold-soft); font-family: var(--font-serif); }
+.today-time .tt-luck { font-size: 11px; margin-top: 3px; }
+.today-time.good .tt-luck { color: var(--green); }
+.today-time.bad .tt-luck { color: var(--red); }
+.today-time .tt-ts { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+
+.today-animal .today-animal-overall { font-size: 15px; line-height: 2.0; color: var(--text); margin-bottom: 12px; text-indent: 2em; }
+.today-sign-head { display: flex; align-items: center; gap: 16px; justify-content: center; margin: 6px 0 12px; }
+.today-sign-sym { font-size: 44px; }
+.today-sign-score { text-align: center; }
+.today-sign-score b { display: block; font-size: 30px; color: var(--gold-soft); font-family: var(--font-serif); }
+.today-sign-score i { font-size: 11px; color: var(--text-dim); font-style: normal; letter-spacing: 2px; }
+.today-sign-overall { font-size: 14px; line-height: 2.0; color: var(--text); text-indent: 2em; }
+.today-tarot { display: flex; gap: 14px; align-items: flex-start; }
+.today-tarot-face { width: 58px; height: 88px; flex-shrink: 0; border-radius: 10px; background: linear-gradient(160deg, #2b2450, #171033); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 26px; color: var(--gold); }
+.today-tarot-info { flex: 1; }
+.today-tarot-name { font-size: 17px; color: var(--gold-soft); font-family: var(--font-serif); }
+.today-tarot-name span { font-size: 11px; color: var(--text-dim); margin-left: 6px; letter-spacing: 1px; }
+.today-tarot-kw { font-size: 12px; color: var(--gold-deep); margin-top: 4px; }
+.today-tarot-text { font-size: 13.5px; line-height: 1.9; color: var(--text); margin-top: 8px; }
+.qian-yiji { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 12px; color: var(--text-dim); letter-spacing: 1px; }
+
+/* ============ 星座档案 ============ */
+.prof-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.prof-kv { text-align: center; background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 10px; padding: 8px 4px; }
+.prof-kv span { display: block; font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
+.prof-kv b { font-size: 13px; color: var(--gold-soft); font-weight: 600; }
+.prof-sec { margin-bottom: 12px; }
+.prof-sec h4 { font-size: 13px; color: var(--gold); letter-spacing: 2px; margin-bottom: 6px; }
+.prof-sec p { font-size: 13.5px; line-height: 1.95; color: var(--text); text-indent: 2em; }
+.prof-tagrow { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+.prof-tag { font-size: 12px; padding: 4px 12px; border-radius: 16px; }
+.prof-tag.good { color: var(--green); background: rgba(125,163,127,.12); border: 1px solid rgba(125,163,127,.4); }
+.prof-tag.bad { color: var(--red); background: rgba(192,80,77,.1); border: 1px solid rgba(192,80,77,.35); }
+.match-col h4 { font-size: 13px; color: var(--gold); margin: 8px 0 6px; letter-spacing: 2px; }
+.match-row { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13.5px; }
+.match-row:last-child { border-bottom: none; }
+.match-name { color: var(--gold-soft); flex-shrink: 0; }
+.match-note { color: var(--text-dim); text-align: right; }
+
+/* ============ 塔罗牌意库 ============ */
+.lib-tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.lib-tabs button { flex: 1; min-width: 60px; padding: 9px 4px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.03); color: var(--text-dim); font-size: 13px; font-family: inherit; cursor: pointer; transition: all .15s; }
+.lib-tabs button.active { background: linear-gradient(135deg, var(--night-2), var(--night)); color: #e8e4ff; border-color: rgba(122,92,200,.5); }
+.lib-suit-intro { font-size: 13px; color: var(--text-dim); line-height: 1.9; margin-bottom: 12px; padding: 10px 12px; background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 10px; }
+.lib-suit-intro b { color: var(--gold-soft); }
+.lib-card { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; background: rgba(255,255,255,.03); }
+.lib-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.lib-name { font-size: 15px; color: var(--gold-soft); font-family: var(--font-serif); letter-spacing: 1px; }
+.lib-en { font-size: 11px; color: var(--text-dim); }
+.lib-kw { font-size: 12px; margin: 3px 0; }
+.lib-kw.up { color: var(--green); }
+.lib-kw.rev { color: var(--red); }
+.lib-text { font-size: 13px; line-height: 1.9; color: var(--text); margin-top: 5px; }
+.lib-text.up { border-top: 1px dashed var(--line); padding-top: 6px; }
+
+/* ============ 十神解读 ============ */
+.ss-row { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--line); }
+.ss-row:last-child { border-bottom: none; }
+.ss-label { width: 44px; flex-shrink: 0; font-size: 13px; color: var(--gold); letter-spacing: 2px; padding-top: 2px; }
+.ss-body { flex: 1; }
+.ss-gan { font-size: 14px; color: var(--text); }
+.ss-gan b { color: var(--gold-soft); margin-right: 8px; }
+.ss-gan span { color: var(--text-dim); font-size: 13px; }
+.ss-zhi { margin-top: 4px; font-size: 12px; color: var(--text-dim); }
+.ss-zhi-item { display: inline-block; background: rgba(212,175,110,.12); border: 1px solid var(--line); border-radius: 10px; padding: 1px 8px; margin-right: 4px; font-size: 11px; color: var(--gold-soft); }
+
+/* ============ 纳音 ============ */
+.nayin-row { display: flex; gap: 10px; }
+.nayin-item { flex: 1; background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 12px; padding: 14px; text-align: center; }
+.nayin-label { font-size: 11px; color: var(--text-dim); letter-spacing: 2px; }
+.nayin-name { font-size: 20px; color: var(--gold-soft); font-family: var(--font-serif); margin: 6px 0; }
+.nayin-item p { font-size: 12.5px; line-height: 1.85; color: var(--text-dim); text-align: left; }
+
+/* ============ 门派精解 ============ */
+.school-tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.school-tabs button { flex: 1; min-width: 76px; padding: 9px 4px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.03); color: var(--text-dim); font-size: 13px; font-family: inherit; cursor: pointer; transition: all .15s; }
+.school-tabs button.active { background: linear-gradient(135deg, var(--gold-deep), var(--gold)); color: #241a08; border-color: var(--gold); font-weight: 700; }
+.school-head { margin-bottom: 12px; }
+.school-name { font-size: 17px; color: var(--gold-soft); font-family: var(--font-serif); letter-spacing: 2px; }
+.school-tagline { font-size: 12px; color: var(--gold-deep); margin-top: 4px; letter-spacing: 1px; }
+.school-classics { font-size: 12px; color: var(--text-dim); margin-top: 8px; line-height: 1.8; }
+.school-classics b { color: var(--gold-soft); }
+.school-method { font-size: 13px; color: var(--text-dim); line-height: 1.9; margin-top: 8px; padding: 10px 12px; background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 10px; }
+.school-reading { font-size: 14px; line-height: 2.0; color: var(--text); margin: 6px 0 14px; }
+.school-reading p { margin-bottom: 8px; text-indent: 2em; }
+
+/* ============ 塔罗分领域 ============ */
+.t-domains { margin: 10px 0 4px; padding-top: 8px; border-top: 1px dashed var(--line); }
+.t-domain { display: flex; gap: 8px; align-items: baseline; padding: 3px 0; font-size: 12.5px; }
+.t-domain-label { width: 30px; flex-shrink: 0; color: var(--gold); letter-spacing: 1px; font-weight: 600; }
+.t-domain-text { color: var(--text); line-height: 1.7; }
+
+/* ============ 抽签详解 ============ */
+.qian-detail { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.qian-detail-head { font-size: 15px; color: var(--gold-soft); font-family: var(--font-serif); letter-spacing: 2px; margin-bottom: 8px; }
+.qian-detail-desc { font-size: 13.5px; line-height: 1.95; color: var(--text); text-indent: 2em; }
+.qian-detail-advice { font-size: 13px; line-height: 1.9; color: var(--text-dim); margin-top: 8px; padding: 10px 12px; background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 10px; }
+.qian-detail-advice b { color: var(--gold); }
+.qian-dir-tabs { display: flex; gap: 6px; margin: 12px 0 8px; }
+.qian-dir-tabs button { flex: 1; padding: 8px 4px; border: 1px solid var(--line); border-radius: 9px; background: rgba(255,255,255,.03); color: var(--text-dim); font-size: 13px; font-family: inherit; cursor: pointer; transition: all .15s; }
+.qian-dir-tabs button.active { background: linear-gradient(135deg, var(--gold-deep), var(--gold)); color: #241a08; border-color: var(--gold); font-weight: 700; }
+.qian-dir-body { font-size: 13.5px; line-height: 1.9; color: var(--text); }
+
+/* ============ 神煞（按柱） ============ */
+.ss-pillars { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.ss-pillar-row { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 10px; }
+.ss-pillar-label { font-size: 13px; color: var(--gold-soft); font-family: var(--font-serif); min-width: 40px; letter-spacing: 1px; }
+.ss-pillar-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.ss-tag { font-size: 12px; padding: 2px 9px; border-radius: 12px; letter-spacing: 1px; }
+.ss-tag.ji { color: var(--gold-soft); background: rgba(212,176,106,.14); border: 1px solid rgba(212,176,106,.4); }
+.ss-tag.dong { color: var(--jade, #8fd0b0); background: rgba(143,208,176,.12); border: 1px solid rgba(143,208,176,.35); }
+.ss-tag.sha { color: #e0908a; background: rgba(208,112,106,.12); border: 1px solid rgba(208,112,106,.35); }
+.ss-legends { display: flex; flex-direction: column; gap: 8px; }
+.ss-legend { padding: 8px 10px; background: rgba(255,255,255,.02); border-radius: 8px; }
+.ss-legend-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; letter-spacing: 1px; }
+.ss-legend-name.ji { color: var(--gold-soft); }
+.ss-legend-name.dong { color: var(--jade, #8fd0b0); }
+.ss-legend-name.sha { color: #e0908a; }
+.ss-legend-text { font-size: 12px; line-height: 1.8; color: var(--text-dim); }
+
+/* ============ 底部导航 ============ */
+.tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+  display: flex; background: rgba(16, 10, 30, .86);
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+  border-top: 1px solid var(--line);
+  padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
+}
+.tab { flex: 1; padding: 6px 0 5px; text-align: center; color: var(--text-dim); font-size: 11px; letter-spacing: 2px; border: none; background: transparent; cursor: pointer; font-family: inherit; transition: color .15s; }
+.tab .ico { font-size: 20px; display: block; margin-bottom: 2px; }
+.tab.active { color: var(--gold-soft); text-shadow: 0 0 14px rgba(212, 175, 110, .5); }
+
+/* ============ 通用 ============ */
+.note { text-align: center; font-size: 12px; color: var(--text-dim); margin-top: 16px; line-height: 2; letter-spacing: 1px; }
+.hidden { display: none !important; }
+.divider { display: flex; align-items: center; gap: 10px; color: var(--gold-deep); font-size: 12px; margin: 6px 0 4px; letter-spacing: 3px; }
+.divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--line), transparent); }
+
+/* 开场 3D 星球动画 */
+.intro-splash { position: fixed; inset: 0; z-index: 999; background: #0b0615; overflow: hidden; transition: opacity .8s ease; }
+.intro-splash.fade { opacity: 0; pointer-events: none; }
+.intro-splash canvas#introCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.intro-title { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
+.intro-title .big { font-family: var(--font-serif); font-size: 46px; letter-spacing: 14px; font-weight: 700; color: var(--gold-soft); text-shadow: 0 0 30px rgba(230, 178, 74, .55), 0 2px 10px rgba(0,0,0,.6); animation: splashIn 1.4s ease both; }
+.intro-title .sub { margin-top: 16px; font-size: 13px; letter-spacing: 8px; color: rgba(236, 217, 171, .85); text-shadow: 0 0 14px rgba(0,0,0,.7); animation: splashIn 1.4s .35s ease both; }
+.intro-title .skip { margin-top: 26px; font-size: 11px; letter-spacing: 3px; color: rgba(236, 217, 171, .5); animation: splashIn 1.4s .7s ease both; }
+@keyframes splashIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* 动效偏好：关闭动画 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+}
+
+/* 窄屏适配 */
+@media (max-width: 380px) {
+  .pillar .gan, .pillar .zhi { font-size: 28px; }
+  .fortune-grid { grid-template-columns: 1fr; }
+  .tarot-cards { gap: 8px; }
+  .tarot-slot { width: 84px; height: 140px; }
+}
+
+/* ============================================================
+   平板适配（≥600px）
+   ============================================================ */
+@media (min-width: 600px) {
+  .wrap { max-width: 860px; padding: 24px 26px; }
+
+  /* 卡片更大、间距更松 */
+  .card { padding: 26px 26px; margin-bottom: 20px; border-radius: 22px; }
+  .card-title { font-size: 18px; }
+  .topbar { padding: 34px 24px 26px; }
+  .topbar h1 { font-size: 38px; letter-spacing: 16px; }
+
+  /* 表单更宽松 */
+  .form-row input[type=number] { padding: 14px; font-size: 17px; }
+  .btn-primary { padding: 17px; font-size: 20px; }
+
+  /* 星座：运势环更大、宫格 3 列 */
+  .score-ring { width: 118px; height: 118px; }
+  .score-ring svg { width: 118px; height: 118px; }
+  .score-num { font-size: 32px; }
+  .fortune-grid { grid-template-columns: repeat(3, 1fr); }
+  .fortune-item.full { grid-column: 1 / -1; }
+  .zodiac-symbol { font-size: 68px; }
+
+  /* 四柱：字体更大更清晰 */
+  .pillar .gan, .pillar .zhi { font-size: 42px; }
+  .pillar .hide { font-size: 12px; }
+  .pillar .nayin { font-size: 12px; }
+
+  /* 大运小运：小运 10 列一行全展开 */
+  .xiaoyun-wrap { grid-template-columns: repeat(10, 1fr); gap: 5px; }
+  .dayun-head { padding: 11px 16px; }
+
+  /* 塔罗：牌更大 */
+  .tarot-slot { width: 104px; height: 170px; }
+  .tarot-front .t-name { font-size: 18px; }
+
+  /* 今日面板：时辰 12 列、生肖宫格更宽 */
+  .today-times { grid-template-columns: repeat(12, 1fr); }
+  .today-d1 { font-size: 24px; }
+
+  /* 纳音两栏更宽 */
+  .nayin-row { gap: 16px; }
+  .nayin-item { padding: 20px; }
+
+  /* 抽签方向 tab 更大 */
+  .qian-dir-tabs button { padding: 11px 6px; font-size: 14px; }
+}
+
+/* ============================================================
+   桌面适配（≥960px）
+   ============================================================ */
+@media (min-width: 960px) {
+  .wrap { max-width: 1080px; padding: 32px 40px; }
+
+  /* 卡片更从容 */
+  .card { padding: 32px; margin-bottom: 24px; }
+  .card-title { font-size: 19px; }
+
+  /* 页头更大气 */
+  .topbar { padding: 44px 40px 32px; }
+  .topbar h1 { font-size: 46px; letter-spacing: 20px; }
+  .topbar .sub { font-size: 14px; letter-spacing: 8px; }
+
+  /* 星座宫格 4 列 */
+  .fortune-grid { grid-template-columns: repeat(4, 1fr); }
+  .fortune-item.full { grid-column: 1 / -1; }
+
+  /* 四柱：更大更舒展 */
+  .pillar .gan, .pillar .zhi { font-size: 48px; }
+  .pillar .pillar-label { font-size: 14px; letter-spacing: 4px; }
+  .pillar .hide { font-size: 13px; }
+  .pillar .nayin { font-size: 13px; }
+
+  /* 塔罗牌更大 */
+  .tarot-slot { width: 118px; height: 192px; }
+  .tarot-front .t-name { font-size: 20px; }
+  .tarot-cards { gap: 22px; }
+
+  /* 今日黄历更舒展 */
+  .today-d1 { font-size: 28px; }
+  .today-times { grid-template-columns: repeat(12, 1fr); gap: 8px; }
+  .today-time { padding: 10px 4px; }
+
+  /* 命理解读、签诗更大行距 */
+  .reading, .tarot-reading, .qian-text, .prof-sec p { font-size: 15px; line-height: 2.1; }
+
+  /* 大运小运：间距更松 */
+  .xiaoyun-wrap { gap: 6px; }
+  .dayun-list { gap: 8px; }
+
+  /* 底部导航：桌面端居中悬浮窄条 */
+  body { padding-bottom: calc(var(--tabbar-h) + 34px); }
+  .tabbar { max-width: 640px; left: 50%; transform: translateX(-50%); border-radius: 18px 18px 0 0; border-left: 1px solid var(--line); border-right: 1px solid var(--line); box-shadow: 0 -8px 30px rgba(0,0,0,.4); }
+  .tab { padding: 8px 0 6px; font-size: 12px; }
+  .tab .ico { font-size: 22px; }
+}
+
+/* 超宽屏（≥1440px）：内容更宽但不过分 */
+@media (min-width: 1440px) {
+  .wrap { max-width: 1240px; }
+  .fortune-grid { grid-template-columns: repeat(4, 1fr); }
+}

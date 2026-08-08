@@ -109,8 +109,11 @@
     'float noise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(hash(i),hash(i+vec2(1.0,0.0)),f.x),mix(hash(i+vec2(0.0,1.0)),hash(i+vec2(1.0,1.0)),f.x),f.y); }',
     'void main(){',
     '  float r = length(vPos.xz);',
-    '  float band = 0.35 + 0.65 * noise(vec2(r*40.0, 3.0));',
-    '  gl_FragColor = vec4(uColor * band, 0.95);',
+    '  /* 卡西尼缝：环中段一条暗缝，更真实 */',
+    '  float cassini = 1.0 - smoothstep(0.04, 0.09, abs(r - 1.06));',
+    '  float band = 0.3 + 0.7 * noise(vec2(r*42.0, 3.0));',
+    '  vec3 col = uColor * band * (1.0 - cassini * 0.85);',
+    '  gl_FragColor = vec4(col, 0.97);',
     '}'
   ].join('\n');
 
@@ -256,7 +259,12 @@
   function play(canvas, overlay, onDone) {
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var gl = null;
-    try { gl = canvas.getContext('webgl', { antialias: true }) || canvas.getContext('experimental-webgl', { antialias: true }); } catch (e) { gl = null; }
+    // 苹果 iOS Safari 兼容：不用 alpha:false（会导致变色），用透明+明确底色；
+    // 关 antialias 避免 iOS 渲染 bug，用 preserveDrawingBuffer 兜底
+    try {
+      gl = canvas.getContext('webgl', { antialias: false, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' })
+        || canvas.getContext('experimental-webgl', { antialias: false, alpha: true, preserveDrawingBuffer: true });
+    } catch (e) { gl = null; }
 
     var finished = false;
     var finish = function () { if (!finished) { finished = true; if (onDone) onDone(); } };
@@ -274,7 +282,7 @@
     } catch (e) { fallback(canvas, finish); return; }
 
     var sphere = buildSphere(42, 84);
-    var ring = buildRing(0.74, 1.16, 40);
+    var ring = buildRing(0.78, 1.38, 48);   // 更宽的环，接近真实土星比例
     var orbitBufs = PLANETS.map(function (p) { return buildOrbit(p.R, 96); });
 
     function bindGeom(prog, geom) {
@@ -309,7 +317,7 @@
       gl.vertexAttribPointer(sk, 2, gl.FLOAT, false, 0, 0);
     }
 
-    gl.clearColor(0, 0, 0, 1);
+    gl.clearColor(0.04, 0.03, 0.09, 1);   // 深紫黑底，柔和（iOS 上避免纯黑反差过大变色）
     gl.enable(gl.DEPTH_TEST);
     gl.disable(gl.CULL_FACE);
 
@@ -317,13 +325,22 @@
 
     var raf = null, start = performance.now(), skip = false;
     function resize() {
-      var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      var w = canvas.clientWidth || window.innerWidth, h = canvas.clientHeight || window.innerHeight;
-      canvas.width = Math.max(1, Math.round(w * dpr));
-      canvas.height = Math.max(1, Math.round(h * dpr));
-      gl.viewport(0, 0, canvas.width, canvas.height);
+      // 苹果 Retina DPR 最高到 3，不能用 min(1.5) 硬截断（会导致 canvas 与 CSS 尺寸不匹配 → 变形/模糊）
+      var dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+      var rect = canvas.getBoundingClientRect();
+      var w = rect.width || canvas.clientWidth || window.innerWidth;
+      var h = rect.height || canvas.clientHeight || window.innerHeight;
+      var pw = Math.max(1, Math.round(w * dpr));
+      var ph = Math.max(1, Math.round(h * dpr));
+      // 仅在尺寸变化时才重设，避免每帧抖动
+      if (canvas.width !== pw || canvas.height !== ph) {
+        canvas.width = pw;
+        canvas.height = ph;
+      }
+      gl.viewport(0, 0, pw, ph);
     }
     resize();
+    window.addEventListener('orientationchange', function () { setTimeout(resize, 300); });
     window.addEventListener('resize', resize);
 
     function frame() {
@@ -418,6 +435,27 @@
           gl.uniform3f(gl.getUniformLocation(ringProg, 'uColor'), p.cA[0], p.cA[1], p.cA[2]);
           gl.drawElements(gl.TRIANGLES, rn, gl.UNSIGNED_SHORT, 0);
         }
+      }
+
+      /* 行星发光晕：加法混合，每颗行星一层柔和光晕（更立体） */
+      if (glowProg) {
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+        gl.depthMask(false);
+        gl.useProgram(glowProg);
+        var planetGlowN = bindGeom(glowProg, sphere);
+        gl.uniformMatrix4fv(gl.getUniformLocation(glowProg, 'uVP'), false, vp);
+        for (i = 0; i < PLANETS.length; i++) {
+          p = PLANETS[i];
+          ang = p.ph + t * p.speed;
+          x = Math.cos(ang) * p.R;
+          z = Math.sin(ang) * p.R;
+          gl.uniformMatrix4fv(gl.getUniformLocation(glowProg, 'uModel'), false, trs(x, 0, z, 0, 0, p.size * 1.8));
+          gl.uniform3f(gl.getUniformLocation(glowProg, 'uColor'), p.cA[0], p.cA[1], p.cA[2]);
+          gl.uniform1f(gl.getUniformLocation(glowProg, 'uStrength'), 0.28);
+          gl.drawElements(gl.TRIANGLES, planetGlowN, gl.UNSIGNED_SHORT, 0);
+        }
+        gl.depthMask(true);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
       }
 
       raf = requestAnimationFrame(frame);

@@ -108,14 +108,20 @@
       setTimeout(() => { if (splash.parentNode) splash.parentNode.removeChild(splash); }, 650);
       enterApp();
     };
-    // 单颗真实星球（最早版）优先
-    if (window.Intro && canvas) {
-      try { window.Intro.play(canvas, splash, exit); return; } catch (e) {}
-    }
-    if (window.Intro2 && canvas) {
-      try { window.Intro2.play(canvas, splash, exit); return; } catch (e) {}
-    }
-    setTimeout(exit, 250);   // 无动画时立即进入
+    // 模板选择：URL 参数 ?intro=planet|solar|beidou（默认 planet=单星球）
+    const params = new URLSearchParams(location.search);
+    const choice = params.get('intro') || 'planet';
+    const tryPlay = (name) => {
+      const app = { planet: window.Intro, solar: window.Intro2, beidou: window.IntroBeidou }[name];
+      if (app && canvas) { try { app.play(canvas, splash, exit); return true; } catch (e) {} }
+      return false;
+    };
+    // 依次尝试：选定的 → 单星球 → 太阳系 → 北斗 → 快速进入
+    if (tryPlay(choice)) return;
+    if (choice !== 'planet' && tryPlay('planet')) return;
+    if (choice !== 'solar' && tryPlay('solar')) return;
+    if (choice !== 'beidou' && tryPlay('beidou')) return;
+    setTimeout(exit, 250);
   }
 
   /* ---------- 启动 ---------- */

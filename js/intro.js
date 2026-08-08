@@ -237,7 +237,8 @@
   function play(canvas, overlay, onDone) {
     const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let gl = null;
-    try { gl = canvas.getContext('webgl', { antialias: true, alpha: false }) || canvas.getContext('experimental-webgl', { antialias: true, alpha: false }); } catch (e) { gl = null; }
+    // 苹果 iOS Safari 兼容：不用 alpha:false（导致变色），关 antialias 避免渲染 bug
+    try { gl = canvas.getContext('webgl', { antialias: false, alpha: true, preserveDrawingBuffer: true }) || canvas.getContext('experimental-webgl', { antialias: false, alpha: true }); } catch (e) { gl = null; }
 
     const finish = () => { if (onDone) onDone(); };
 
@@ -279,7 +280,7 @@
     /* 大气壳 */
     const atmoProg = createProgram(gl, VERT, FRAG_ATMO);
 
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearColor(0.04, 0.03, 0.09, 1.0);   // 深紫黑底（iOS 上避免纯黑反差变色）
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -291,12 +292,18 @@
     let raf = null, start = performance.now(), skip = false;
 
     function resize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      const w = canvas.clientWidth || window.innerWidth;
-      const h = canvas.clientHeight || window.innerHeight;
-      canvas.width = Math.max(1, Math.round(w * dpr));
-      canvas.height = Math.max(1, Math.round(h * dpr));
-      gl.viewport(0, 0, canvas.width, canvas.height);
+      // 苹果 Retina DPR 可达 3，不能硬截断到 1.5（导致 canvas 与 CSS 尺寸不匹配 → 变形模糊）
+      const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width || canvas.clientWidth || window.innerWidth;
+      const h = rect.height || canvas.clientHeight || window.innerHeight;
+      const pw = Math.max(1, Math.round(w * dpr));
+      const ph = Math.max(1, Math.round(h * dpr));
+      if (canvas.width !== pw || canvas.height !== ph) {
+        canvas.width = pw;
+        canvas.height = ph;
+      }
+      gl.viewport(0, 0, pw, ph);
     }
     resize();
     window.addEventListener('resize', resize);

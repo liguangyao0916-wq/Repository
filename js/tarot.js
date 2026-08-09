@@ -276,15 +276,70 @@
   function localReading() {
     if (!drawn) return '';
     const labels = spread === 'three' ? ['过去', '现在', '未来'] : spread === 'choice' ? ['选择 A', '选择 B'] : ['今日指引'];
+    const q = question.trim();
+
+    /* 问题领域判断（结合所问） */
+    const area = q ? (q.indexOf('财') >= 0 || q.indexOf('钱') >= 0 || q.indexOf('工作') >= 0 || q.indexOf('事业') >= 0 ? '事业与财务'
+      : q.indexOf('爱') >= 0 || q.indexOf('情') >= 0 || q.indexOf('恋') >= 0 || q.indexOf('婚') >= 0 || q.indexOf('对象') >= 0 ? '感情'
+      : q.indexOf('健康') >= 0 || q.indexOf('身') >= 0 ? '健康'
+      : q.indexOf('学业') >= 0 || q.indexOf('考试') >= 0 || q.indexOf('学习') >= 0 ? '学业'
+      : '整体运势') : '整体运势';
+
+    /* 位置含义（不同牌阵位置 = 不同角度） */
+    const posMean = {
+      '过去': '你走到今天这一步的根基与铺垫',
+      '现在': '此刻正缠绕你的核心课题',
+      '未来': '若顺着现在走下去，将要浮现的走向',
+      '选择 A': '这条路的明面与它所承载的能量',
+      '选择 B': '另一条路的暗面与它所指向的结果',
+      '今日指引': '此刻最需要你听见的声音'
+    };
+
+    /* 每张牌：结合位置解读 + 结合领域 */
     const lines = drawn.map((d, i) => {
       const main = d.reverse ? d.card.reverseText : d.card.uprightText;
-      return labels[i] + '是「' + d.card.name + '」' + (d.reverse ? '逆位' : '正位') + '。' + main;
+      const kw = d.reverse ? d.card.reverse : d.card.upright;
+      const pos = labels[i];
+      return '『' + pos + '·' + d.card.name + '（' + (d.reverse ? '逆位' : '正位') + '）』' + posMean[pos] +
+        '。这一象的核心是"' + kw.join('、') + '"。' + main +
+        (q ? '放在你问的" ' + area + ' "上看，' + applyArea(d, area, pos) : '');
     });
+
+    /* 组合关系：牌与牌之间的呼应 */
+    let combo = '';
+    if (spread === 'three' && drawn.length === 3) {
+      const kw0 = drawn[0].reverse ? drawn[0].card.reverse : drawn[0].card.upright;
+      const kw2 = drawn[2].reverse ? drawn[2].card.reverse : drawn[2].card.upright;
+      combo = '三张牌首尾呼应：过去的"' + kw0.join('、') + '"，正推着未来的"' + kw2.join('、') + '"——中间这张牌，就是此刻你要做选择的那个关口。';
+    } else if (spread === 'choice' && drawn.length === 2) {
+      const a = drawn[0].reverse ? drawn[0].card.reverse : drawn[0].card.upright;
+      const b = drawn[1].reverse ? drawn[1].card.reverse : drawn[1].card.upright;
+      combo = '两条路摆在你面前：一边偏"' + a.join('、') + '"，另一边偏"' + b.join('、') + '"——你心里更放不下的那个，往往就是你的答案。';
+    }
+
     let overall;
-    if (spread === 'one') overall = '这一张牌代表着你此刻最需要听见的声音。';
-    else if (spread === 'three') overall = '三张牌串联起一条时间线，过去铺垫了现在，现在正酝酿着未来。';
-    else overall = '两张牌代表你面前的两条路。你真正的答案，往往藏在哪个选择让你心里更安稳之间。';
-    return '【牌阵解读】\n' + lines.join('\n') + '\n【整体提示】' + overall + (question.trim() ? '\n关于你心中所问，答案正随着你对牌面的领悟渐渐清晰。' : '');
+    if (spread === 'one') overall = '这一张牌浓缩了此刻最重要的讯息，别贪多，先把它记在心里。';
+    else if (spread === 'three') overall = '整副牌看下来，是一条"从过去通往未来"的脉络，而你正站在中间。';
+    else overall = '牌面在帮你把模糊的选项照得清楚一点，真正的决定权始终在你手里。';
+
+    return '【牌阵解读】\n' + lines.join('\n') +
+      (combo ? '\n【组合串联】' + combo : '') +
+      '\n【整体提示】' + overall +
+      (q ? '\n关于你问的" ' + area + ' "，' + overall.replace('。', '，') + '记得把心放回肚子里，牌面只是镜子，路还是你自己走。' : '');
+  }
+
+  /* 按领域给每张牌一个"落地"解读（让它跟问题绑起来） */
+  function applyArea(d, area, pos) {
+    const kw = d.reverse ? d.card.reverse : d.card.upright;
+    const tone = d.reverse ? '提醒你注意' : '意味着';
+    const dir = {
+      '事业与财务': '这张牌落在' + pos + '，' + tone + '你在职场上' + (kw[0] || '的变化') + '——顺势而为、别硬扛，机会常藏在变化里。',
+      '感情': '这张牌落在' + pos + '，' + tone + '你们之间的' + (kw[1] || kw[0] || '状态') + '——感情里少讲道理、多给温度，答案往往在感受里。',
+      '健康': '这张牌落在' + pos + '，' + tone + '你的身心正在' + (kw[0] || '调整') + '——慢下来照顾自己，比什么都重要。',
+      '学业': '这张牌落在' + pos + '，' + tone + '你的学习路上需要' + (kw[1] || kw[0] || '沉淀') + '——不急不躁，厚积自然薄发。',
+      '整体运势': '这张牌落在' + pos + '，' + tone + '你当下整体能量偏向"' + (kw[0] || '平稳') + '"——顺着这个节奏走，别跟它拧着来。'
+    }[area];
+    return dir || '顺着它的提示去体会。';
   }
   function localReadingHtml() {
     return window.AI.renderText(localReading());

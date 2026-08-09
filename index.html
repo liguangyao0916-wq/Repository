@@ -4,11 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#100a1e">
-<meta name="description" content="星座运势 · 四柱八字 · 塔罗占卜 · 趣味抽签 —— 卦阁命理合集">
+<meta name="description" content="星座运势 · 四柱八字 · 塔罗占卜 · 趣味抽签 —— 观星台命理合集">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>卦阁 · 星命塔签</title>
-<link rel="stylesheet" href="css/style.css?v=9">
+<title>观星台 · 星命塔签</title>
+<link rel="stylesheet" href="css/style.css?v=28">
+<script>
+/* 强制默认进入太阳系开屏：内联脚本每次执行，不走缓存 */
+(function () {
+  try {
+    var u = new URL(location.href);
+    if (!u.searchParams.get('intro')) {
+      u.searchParams.set('intro', 'solar');
+      location.replace(u.toString());
+    }
+  } catch (e) {}
+})();
+</script>
 </head>
 <body>
 
@@ -16,16 +28,16 @@
 <div id="splash" class="intro-splash">
   <canvas id="introCanvas"></canvas>
   <div class="intro-title">
-    <div class="big">卦 阁</div>
+    <div class="big">观 星 台</div>
     <div class="sub">星 · 命 · 塔 · 签</div>
     <div class="skip">轻触屏幕进入</div>
   </div>
 </div>
 
 <header class="topbar">
-  <h1>卦 阁</h1>
+  <h1>观 星 台</h1>
   <div class="sub">今日黄历 · 星座运势 · 八字排盘 · 塔罗占卜 · 趣味抽签</div>
-  <div class="sub" style="margin-top:4px;color:var(--gold-deep)">玄学解盘 · 以千年智慧为你指路</div>
+  <div class="sub" style="margin-top:4px;color:var(--gold-deep)">观星察命 · 以千年智慧为你指路</div>
 </header>
 
 <main class="wrap">
@@ -51,27 +63,28 @@
 </nav>
 
 <!-- 开场动画与核心路由：小脚本先加载，动画即刻启动 -->
-<script src="js/intro.js?v=26"></script>
-<script src="js/intro-solar-ultimate.js?v=27"></script>
-<script src="js/intro-beidou.js?v=26"></script>
-<script src="js/app.js?v=26"></script>
+<script src="js/intro.js?v=29"></script><script src="js/intro-planet-pro.js?v=29"></script>
+
+<script src="js/intro-beidou.js?v=28"></script>
+
+<script src="js/intro-solar-canvas.js?v=31"></script><script src="js/app.js?v=31"></script>
 <!-- 大引擎与业务模块：defer 不阻塞开场动画 -->
-<script src="lunar.js?v=26" defer></script>
-<script src="js/data/xingzuo-data.js?v=26" defer></script>
-<script src="js/data/tarot-data.js?v=26" defer></script>
-<script src="js/data/tarot-minor-data.js?v=26" defer></script>
-<script src="js/data/tarot-domains-data.js?v=26" defer></script>
-<script src="js/data/qian-data.js?v=26" defer></script>
-<script src="js/data/today-data.js?v=26" defer></script>
-<script src="js/data/bazi-data.js?v=26" defer></script>
-<script src="js/data/bazi-schools-data.js?v=26" defer></script>
-<script src="js/data/shensha-data.js?v=26" defer></script>
-<script src="js/xingzuo.js?v=26" defer></script>
-<script src="js/tarot.js?v=26" defer></script>
-<script src="js/qian.js?v=26" defer></script>
-<script src="js/bazi.js?v=26" defer></script>
-<script src="js/today.js?v=26" defer></script>
-<script src="js/ai.js?v=26" defer></script>
+<script src="lunar.js?v=28" defer></script>
+<script src="js/data/xingzuo-data.js?v=28" defer></script>
+<script src="js/data/tarot-data.js?v=28" defer></script>
+<script src="js/data/tarot-minor-data.js?v=28" defer></script>
+<script src="js/data/tarot-domains-data.js?v=28" defer></script>
+<script src="js/data/qian-data.js?v=28" defer></script>
+<script src="js/data/today-data.js?v=28" defer></script>
+<script src="js/data/bazi-data.js?v=28" defer></script>
+<script src="js/data/bazi-schools-data.js?v=28" defer></script>
+<script src="js/data/shensha-data.js?v=28" defer></script>
+<script src="js/xingzuo.js?v=28" defer></script>
+<script src="js/tarot.js?v=28" defer></script>
+<script src="js/qian.js?v=28" defer></script>
+<script src="js/bazi.js?v=28" defer></script>
+<script src="js/today.js?v=28" defer></script>
+<script src="js/ai.js?v=28" defer></script>
 <script>
 /* 版本感知缓存清理：记录上次版本号，版本变化才清空 SW 缓存并注销旧 SW，
    确保任何设备加载到的都是最新文件；版本不变则保留离线缓存 */

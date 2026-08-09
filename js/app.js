@@ -121,17 +121,18 @@
       setTimeout(() => { if (splash.parentNode) splash.parentNode.removeChild(splash); }, 650);
       enterApp();
     };
-    // 模板选择：URL 参数 ?intro=planet|solar|beidou（默认 solar=太阳系）
+    // 模板选择：URL 参数 ?intro=pro|solar|planet|beidou（默认 pro=高级感星球）
     const params = new URLSearchParams(location.search);
     const choice = params.get('intro') || 'solar';
     const tryPlay = (name) => {
-      const app = { planet: window.Intro, solar: window.Intro2, beidou: window.IntroBeidou }[name];
+      const app = { pro: window.IntroPlanetPro, planet: window.Intro, solar: window.Intro2, beidou: window.IntroBeidou }[name];
       if (app && canvas) { try { app.play(canvas, splash, exit); return true; } catch (e) {} }
       return false;
     };
-    // 依次尝试：选定的 → 太阳系 → 单星球 → 北斗 → 快速进入
+    // 依次尝试：选定的 → 太阳系 → 高级感星球 → 单星球 → 北斗 → 快速进入
     if (tryPlay(choice)) return;
     if (choice !== 'solar' && tryPlay('solar')) return;
+    if (choice !== 'pro' && tryPlay('pro')) return;
     if (choice !== 'planet' && tryPlay('planet')) return;
     if (choice !== 'beidou' && tryPlay('beidou')) return;
     setTimeout(exit, 250);

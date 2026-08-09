@@ -1,6 +1,6 @@
 {
-  "name": "卦阁 · 星命塔签",
-  "short_name": "卦阁",
+  "name": "观星台 · 星命塔签",
+  "short_name": "观星台",
   "description": "星座运势 · 四柱八字 · 塔罗占卜 · 趣味抽签",
   "lang": "zh-CN",
   "start_url": "./index.html",

@@ -8,10 +8,21 @@
 
   let status = null;   // null=未探测, true/false
 
+  /* 后端地址：优先 URL ?api= 参数，其次 localStorage 'guage.api'，默认同域 */
+  function apiBase() {
+    try {
+      const p = new URLSearchParams(location.search);
+      if (p.get('api')) return p.get('api').replace(/\/$/, '');
+      const saved = localStorage.getItem('guage.api');
+      if (saved) return saved.replace(/\/$/, '');
+    } catch (e) {}
+    return '';
+  }
+
   async function probe() {
     if (status != null) return status;
     try {
-      const r = await fetch('/api/status', { method: 'POST' });
+      const r = await fetch(apiBase() + '/api/status', { method: 'POST' });
       const j = await r.json();
       status = !!(j && j.ai);
     } catch (e) { status = false; }
@@ -45,7 +56,7 @@
     const aiOk = await probe();
     if (!aiOk) return { text: cleanText(localBuilder ? localBuilder() : ''), degraded: true };
     try {
-      const r = await fetch(path, {
+      const r = await fetch(apiBase() + path, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });

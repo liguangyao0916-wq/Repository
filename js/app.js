@@ -90,6 +90,19 @@
     if (entered) return;
     if (window.TodayApp) {
       entered = true;
+      // 强制彻底清除 splash（双保险：先内联隐藏，再移除 DOM）
+      const sp = document.getElementById('splash');
+      if (sp) {
+        sp.style.display = 'none';
+        sp.style.visibility = 'hidden';
+        sp.style.pointerEvents = 'none';
+        if (sp.parentNode) sp.parentNode.removeChild(sp);
+      }
+      // 兜底：300ms 后再查一次，确保绝不残留
+      setTimeout(() => {
+        const s2 = document.getElementById('splash');
+        if (s2 && s2.parentNode) { s2.style.display = 'none'; s2.parentNode.removeChild(s2); }
+      }, 300);
       showTab('today');
     } else {
       setTimeout(enterApp, 80);   // 等 defer 模块就绪后进入
@@ -108,18 +121,18 @@
       setTimeout(() => { if (splash.parentNode) splash.parentNode.removeChild(splash); }, 650);
       enterApp();
     };
-    // 模板选择：URL 参数 ?intro=planet|solar|beidou（默认 planet=单星球）
+    // 模板选择：URL 参数 ?intro=planet|solar|beidou（默认 solar=太阳系）
     const params = new URLSearchParams(location.search);
-    const choice = params.get('intro') || 'planet';
+    const choice = params.get('intro') || 'solar';
     const tryPlay = (name) => {
       const app = { planet: window.Intro, solar: window.Intro2, beidou: window.IntroBeidou }[name];
       if (app && canvas) { try { app.play(canvas, splash, exit); return true; } catch (e) {} }
       return false;
     };
-    // 依次尝试：选定的 → 单星球 → 太阳系 → 北斗 → 快速进入
+    // 依次尝试：选定的 → 太阳系 → 单星球 → 北斗 → 快速进入
     if (tryPlay(choice)) return;
-    if (choice !== 'planet' && tryPlay('planet')) return;
     if (choice !== 'solar' && tryPlay('solar')) return;
+    if (choice !== 'planet' && tryPlay('planet')) return;
     if (choice !== 'beidou' && tryPlay('beidou')) return;
     setTimeout(exit, 250);
   }

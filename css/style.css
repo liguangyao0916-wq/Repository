@@ -542,7 +542,7 @@ body {
 
 /* 开场 3D 星球动画 */
 .intro-splash { position: fixed; inset: 0; z-index: 999; background: #0b0615; overflow: hidden; transition: opacity .8s ease; }
-.intro-splash.fade { opacity: 0; pointer-events: none; }
+.intro-splash.fade { opacity: 0; pointer-events: none !important; visibility: hidden; }
 .intro-splash canvas#introCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .intro-title { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
 .intro-title .big { font-family: var(--font-serif); font-size: 46px; letter-spacing: 14px; font-weight: 700; color: var(--gold-soft); text-shadow: 0 0 30px rgba(230, 178, 74, .55), 0 2px 10px rgba(0,0,0,.6); animation: splashIn 1.4s ease both; }

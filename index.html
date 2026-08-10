@@ -8,7 +8,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <title>观星台 · 星命塔签</title>
-<link rel="stylesheet" href="css/style.css?v=28">
+<link rel="stylesheet" href="css/style.css?v=29">
 <script>
 /* 强制默认进入太阳系开屏：内联脚本每次执行，不走缓存 */
 (function () {
@@ -81,7 +81,7 @@
 
 <script src="js/intro-beidou.js?v=28"></script>
 
-<script src="js/intro-solar-canvas.js?v=32"></script><script src="js/app.js?v=31"></script><script src="js/voice.js?v=31"></script>
+<script src="js/intro-solar-canvas.js?v=32"></script><script src="js/app.js?v=31"></script><script src="js/voice.js?v=32"></script>
 <!-- 大引擎与业务模块：defer 不阻塞开场动画 -->
 <script src="lunar.js?v=28" defer></script>
 <script src="js/data/xingzuo-data.js?v=28" defer></script>
@@ -98,13 +98,13 @@
 <script src="js/qian.js?v=28" defer></script>
 <script src="js/bazi.js?v=28" defer></script>
 <script src="js/today.js?v=28" defer></script>
-<script src="js/ai.js?v=28" defer></script>
+<script src="js/ai.js?v=29" defer></script>
 <script>
 /* 版本感知缓存清理：记录上次版本号，版本变化才清空 SW 缓存并注销旧 SW，
    确保任何设备加载到的都是最新文件；版本不变则保留离线缓存 */
 (function () {
   try {
-    var VER = '26';
+    var VER = '27';
     var last = null;
     try { last = localStorage.getItem('guage.ver'); } catch (e) {}
     /* 默认 AI 后端：GitHub Pages 是纯静态，默认指向 Vercel 公网后端；

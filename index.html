@@ -62,12 +62,22 @@
   <button class="tab" data-tab="qian"><span class="ico">🎋</span>抽签</button>
 </nav>
 
+<!-- 语音对话入口 -->
+<button id="voiceChatBtn" class="voice-chat-btn" title="语音对话">🎤</button>
+<div id="voiceChatPanel" class="voice-chat-panel hidden">
+  <div class="voice-chat-head">语音对话</div>
+  <div class="voice-chat-status" id="voiceStatus">点击下方按钮，说话即可</div>
+  <div id="voiceChatLog" class="voice-chat-log"></div>
+  <button id="voiceSpeakBtn" class="voice-speak-btn">开始说话</button>
+  <button id="voiceCloseBtn" class="voice-close-btn">关闭</button>
+</div>
+
 <!-- 开场动画与核心路由：小脚本先加载，动画即刻启动 -->
 <script src="js/intro.js?v=29"></script><script src="js/intro-planet-pro.js?v=29"></script>
 
 <script src="js/intro-beidou.js?v=28"></script>
 
-<script src="js/intro-solar-canvas.js?v=31"></script><script src="js/app.js?v=31"></script>
+<script src="js/intro-solar-canvas.js?v=32"></script><script src="js/app.js?v=31"></script><script src="js/voice.js?v=31"></script>
 <!-- 大引擎与业务模块：defer 不阻塞开场动画 -->
 <script src="lunar.js?v=28" defer></script>
 <script src="js/data/xingzuo-data.js?v=28" defer></script>
@@ -90,9 +100,16 @@
    确保任何设备加载到的都是最新文件；版本不变则保留离线缓存 */
 (function () {
   try {
-    var VER = '25';
+    var VER = '26';
     var last = null;
     try { last = localStorage.getItem('guage.ver'); } catch (e) {}
+    /* 默认 AI 后端：GitHub Pages 是纯静态，默认指向 Vercel 公网后端；
+       URL ?api=xxx 可手动覆盖（含 localStorage 'guage.api'） */
+    try {
+      if (!localStorage.getItem('guage.api')) {
+        localStorage.setItem('guage.api', 'https://vercel-app-ten-khaki.vercel.app');
+      }
+    } catch (e) {}
     if (last !== VER) {
       if ('caches' in window) {
         caches.keys().then(function (keys) {

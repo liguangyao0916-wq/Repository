@@ -10,9 +10,28 @@
     var closeBtn = document.getElementById('voiceCloseBtn');
     var status = document.getElementById('voiceStatus');
     var log = document.getElementById('voiceChatLog');
+    var apiInput = document.getElementById('voiceApiInput');
+    var apiSave = document.getElementById('voiceApiSave');
     if (!btn || !panel) return;
 
     var listening = false;
+
+    /* 后端地址设置：打开面板时回显当前配置，保存后写 localStorage 并重置 AI 探测 */
+    function currentApiConfig() {
+      try { return localStorage.getItem('guage.api') || ''; } catch (e) { return ''; }
+    }
+    if (apiInput) {
+      apiInput.value = currentApiConfig();
+      if (apiSave) {
+        apiSave.addEventListener('click', function () {
+          var v = (apiInput.value || '').trim();
+          try { localStorage.setItem('guage.api', v); } catch (e) {}
+          // 重置 AI 探测缓存，让下次走新后端
+          try { window.AI && window.AI.resetProbe && window.AI.resetProbe(); } catch (e) {}
+          status.textContent = v ? '已保存后端，可继续说话' : '已清空，使用内置';
+        });
+      }
+    }
 
     function addMsg(role, text) {
       var d = document.createElement('div');
@@ -70,34 +89,41 @@
       try { rec.start(); } catch (e) { status.textContent = '启动失败'; listening = false; }
     });
 
-    function apiBase() {
+    function apiCandidates() {
       try {
         var p = new URLSearchParams(location.search);
-        if (p.get('api')) return p.get('api').replace(/\/$/, '');
+        if (p.get('api')) return p.get('api').split(',').map(function (s) { return s.trim().replace(/\/$/, ''); }).filter(Boolean);
         var saved = localStorage.getItem('guage.api');
-        if (saved) return saved.replace(/\/$/, '');
+        if (saved) return saved.split(',').map(function (s) { return s.trim().replace(/\/$/, ''); }).filter(Boolean);
       } catch (e) {}
-      return '';
+      return [''];
     }
     function askAI(text) {
-      var path = apiBase() + '/api/voice-chat';
-      fetch(path, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: text })
-      }).then(function (r) { return r.json(); }).then(function (j) {
-        if (j && j.ok && j.text) {
-          addMsg('ai', j.text);
-          speak(j.text);
-          status.textContent = '回复完成，可继续说话';
-        } else {
-          addMsg('ai', '（未连接AI，可本地聊聊）' + (j && j.error ? '：' + j.error : ''));
+      var cands = apiCandidates();
+      // 逐个候选后端尝试，第一个成功就用它（多后端自动切换）
+      function tryNext(i) {
+        if (i >= cands.length) {
+          addMsg('ai', '（未连接AI，可本地聊聊）');
           status.textContent = 'AI未配置，显示内置';
+          return;
         }
-      }).catch(function () {
-        addMsg('ai', '（AI连接失败）');
-        status.textContent = '连接失败';
-      });
+        fetch(cands[i] + '/api/voice-chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: text })
+        }).then(function (r) { return r.json(); }).then(function (j) {
+          if (j && j.ok && j.text) {
+            addMsg('ai', j.text);
+            speak(j.text);
+            status.textContent = '回复完成，可继续说话';
+          } else {
+            tryNext(i + 1); // 这个不通，试下一个
+          }
+        }).catch(function () {
+          tryNext(i + 1);
+        });
+      }
+      tryNext(0);
     }
   }
 

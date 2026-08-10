@@ -8,21 +8,37 @@
 
   let status = null;   // null=未探测, true/false
 
-  /* 后端地址：优先 URL ?api= 参数，其次 localStorage 'guage.api'，默认同域 */
-  function apiBase() {
+  /* 后端地址列表：优先 URL ?api= 参数，其次 localStorage 'guage.api'，支持逗号分隔多后端
+     多后端时自动轮换：先用第一个，探测失败自动换下一个，直到找到可用的 */
+  function apiCandidates() {
     try {
       const p = new URLSearchParams(location.search);
-      if (p.get('api')) return p.get('api').replace(/\/$/, '');
+      if (p.get('api')) return p.get('api').split(',').map(s => s.trim().replace(/\/$/, '')).filter(Boolean);
       const saved = localStorage.getItem('guage.api');
-      if (saved) return saved.replace(/\/$/, '');
+      if (saved) return saved.split(',').map(s => s.trim().replace(/\/$/, '')).filter(Boolean);
     } catch (e) {}
-    return '';
+    return [''];
+  }
+
+  async function apiBase() {
+    const cands = apiCandidates();
+    if (cands.length === 1) return cands[0];
+    // 多后端：探测第一个可用
+    for (const c of cands) {
+      try {
+        const r = await fetch(c + '/api/status', { method: 'POST' });
+        const j = await r.json();
+        if (j && j.ai) return c;
+      } catch (e) {}
+    }
+    return cands[0]; // 全不通，退回第一个（走降级）
   }
 
   async function probe() {
     if (status != null) return status;
     try {
-      const r = await fetch(apiBase() + '/api/status', { method: 'POST' });
+      const base = await apiBase();
+      const r = await fetch(base + '/api/status', { method: 'POST' });
       const j = await r.json();
       status = !!(j && j.ai);
     } catch (e) { status = false; }
@@ -56,7 +72,7 @@
     const aiOk = await probe();
     if (!aiOk) return { text: cleanText(localBuilder ? localBuilder() : ''), degraded: true };
     try {
-      const r = await fetch(apiBase() + path, {
+      const r = await fetch(await apiBase() + path, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
@@ -139,5 +155,7 @@
         : '<p>' + U.escapeHtml(l) + '</p>').join('');
   }
 
-  window.AI = { probe, ask, baziLocal, cleanText, renderText };
+  function resetProbe() { status = null; }
+
+  window.AI = { probe, ask, baziLocal, cleanText, renderText, resetProbe };
 })();

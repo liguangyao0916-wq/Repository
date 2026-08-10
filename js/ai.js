@@ -35,14 +35,15 @@
   }
 
   async function probe() {
-    if (status != null) return status;
+    // 已确认可用则直接返回；失败不缓存（下次再试），避免"开VPN后仍降级"
+    if (status === true) return true;
     try {
       const base = await apiBase();
-      const r = await fetch(base + '/api/status', { method: 'POST' });
+      const r = await fetch(base + '/api/status', { method: 'POST', signal: AbortSignal.timeout(6000) });
       const j = await r.json();
-      status = !!(j && j.ai);
-    } catch (e) { status = false; }
-    return status;
+      status = !!(j && j.ai) || null;
+      return status === true;
+    } catch (e) { status = null; return false; }
   }
 
   /* 清洗解盘文本：去除一切机器编码（markdown 粗体/斜体/标题/列表/行内码/链接），

@@ -39,7 +39,13 @@
     if (status === true) return true;
     try {
       const base = await apiBase();
-      const r = await fetch(base + '/api/status', { method: 'POST', signal: AbortSignal.timeout(6000) });
+      // 必须带 body {path:'/api/status'}，让后端 status 分支识别（不调 DeepSeek，判定 AI 可用）
+      const r = await fetch(base + '/api/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: '/api/status' }),
+        signal: AbortSignal.timeout(6000)
+      });
       const j = await r.json();
       status = !!(j && j.ai) || null;
       return status === true;
